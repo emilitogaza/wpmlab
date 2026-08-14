@@ -14,7 +14,7 @@ export function RaceResults({
 }: {
   snapshot: RaceSnapshot;
   meId: string | null;
-  /** Spectators see the board, but the rematch belongs to the racers. */
+  /** spectators see the board; the rematch button belongs to the racers */
   canRematch: boolean;
   onRematch: () => void;
 }) {
