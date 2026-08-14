@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "url": "http://localhost:3211",
+      "port": 3211,
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev", "-p", "3211"]
+    }
+  ]
+}

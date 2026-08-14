@@ -1,26 +1,405 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+/* ----------------------------------------------------------------------------
+   Design tokens
+   `static` so every variable is emitted even before its first utility use —
+   the semantic --sem-* layer and base styles below reference them with var().
+---------------------------------------------------------------------------- */
+@theme static {
+    /* Radius — the only rounding scale (rounded-0 … rounded-16, rounded-full).
+     Never rounded-sm/md/lg/xl/2xl… — those silently fall back to the Tailwind
+     defaults, which are not part of this scale. */
+    --radius-0: 0rem;
+    --radius-1: 0.25rem; /* 4px  */
+    --radius-1_5: 0.375rem; /* 6px  */
+    --radius-2: 0.5rem; /* 8px  */
+    --radius-3: 0.75rem; /* 12px */
+    --radius-4: 1rem; /* 16px */
+    --radius-5: 1.25rem; /* 20px */
+    --radius-6: 1.5rem; /* 24px */
+    --radius-7: 1.75rem; /* 28px */
+    --radius-8: 2rem; /* 32px */
+    --radius-9: 2.25rem; /* 36px */
+    --radius-10: 2.5rem; /* 40px */
+    --radius-11: 2.75rem; /* 44px */
+    --radius-12: 3rem; /* 48px */
+    --radius-13: 3.25rem; /* 52px */
+    --radius-14: 3.5rem; /* 56px */
+    --radius-15: 3.75rem; /* 60px */
+    --radius-16: 4rem; /* 64px */
+    --radius-full: 9999px; /* infinite */
+
+    /* Font size — extended display range */
+    --text-8xl: 5.8rem;
+    --text-9xl: 6.2rem;
+    --text-10xl: 10rem;
+    --text-10xl--line-height: 1;
+    --text-11xl: 11rem;
+    --text-11xl--line-height: 1;
+    --text-12xl: 12rem;
+    --text-12xl--line-height: 1;
+
+    /* Breakpoints — extra xxs/xs/3xl around the defaults */
+    --breakpoint-xxs: 22rem;
+    --breakpoint-xs: 24rem;
+    --breakpoint-sm: 40rem;
+    --breakpoint-md: 48rem;
+    --breakpoint-lg: 64rem;
+    --breakpoint-xl: 80rem;
+    --breakpoint-2xl: 96rem;
+    --breakpoint-3xl: 128rem;
+
+    /* Default stroke width — icons and borders share one number. The unitless
+     value feeds SVG stroke-width; Tailwind reads --default-border-width for
+     the bare `border`/`divide-*` utilities and border-width needs a length,
+     hence the *1px. */
+    --stroke-width: 1.6;
+    --default-border-width: calc(var(--stroke-width) * 1px);
+
+    /* Accent palette — the brand purple. Vivid; drives caret, active state,
+     and the local player's colour in a race. */
+    --color-accent-50: oklch(0.977 0.014 308.3);
+    --color-accent-100: oklch(0.946 0.033 307.2);
+    --color-accent-200: oklch(0.902 0.063 306.7);
+    --color-accent-300: oklch(0.827 0.119 306.4);
+    --color-accent-400: oklch(0.714 0.203 305.5);
+    --color-accent-500: oklch(0.627 0.265 303.9);
+    --color-accent-600: oklch(0.558 0.288 302.3);
+    --color-accent-700: oklch(0.496 0.265 301.9);
+    --color-accent-800: oklch(0.438 0.218 303.7);
+    --color-accent-900: oklch(0.381 0.176 304);
+    --color-accent-950: oklch(0.291 0.149 302.7);
+
+    /* Neutral palette — purple-tinted greys. Every surface and every piece of
+     body text comes from here, so the whole app reads purple without the
+     accent having to carry it alone. */
+    --color-neutral-50: oklch(0.985 0.004 300);
+    --color-neutral-100: oklch(0.968 0.007 300);
+    --color-neutral-200: oklch(0.928 0.011 300);
+    --color-neutral-300: oklch(0.876 0.015 300);
+    --color-neutral-400: oklch(0.716 0.019 300);
+    --color-neutral-500: oklch(0.565 0.021 300);
+    --color-neutral-600: oklch(0.452 0.021 300);
+    --color-neutral-700: oklch(0.382 0.02 300);
+    --color-neutral-800: oklch(0.282 0.018 300);
+    --color-neutral-900: oklch(0.212 0.015 300);
+    --color-neutral-950: oklch(0.152 0.012 300);
+
+    /* Error palette */
+    --color-error-50: oklch(0.971 0.013 17.38);
+    --color-error-100: oklch(0.936 0.032 17.717);
+    --color-error-200: oklch(0.885 0.062 18.334);
+    --color-error-300: oklch(0.808 0.114 19.571);
+    --color-error-400: oklch(0.704 0.191 22.216);
+    --color-error-500: oklch(0.637 0.237 25.331);
+    --color-error-600: oklch(0.577 0.245 27.325);
+    --color-error-700: oklch(0.505 0.213 27.518);
+    --color-error-800: oklch(0.444 0.177 26.899);
+    --color-error-900: oklch(0.396 0.141 25.723);
+    --color-error-950: oklch(0.258 0.092 26.042);
 }
 
+/* ----------------------------------------------------------------------------
+   Semantic tokens — ink for text, fill for surfaces. These are what app code
+   uses (text-ink, bg-fill, …); they resolve through --sem-* so light and dark
+   both work.
+
+   The split is a hard rule, not a suggestion: ink tokens are foreground only
+   (text, icons, strokes) and fill tokens are background only. Never paint a
+   surface with ink — no bg-ink, no bg-ink-dim/20, no
+   color-mix(…, var(--sem-ink) 8%) — because ink flips with the theme and an
+   ink-tinted surface inverts with it. Reach for a fill instead:
+     fill        page background
+     fill-raised cards and panels lifted off the page
+     fill-muted  subtle surfaces (chips, skeletons, tracks) and hover on plain
+     fill-strong one step further: hover on muted, pressed/expanded states
+     fill-light  always-light surface in both themes (e.g. a switch thumb)
+     fill-dark   always-dark surface in both themes
+   If none fit, add a --sem-fill-* token here rather than tinting with ink.
+---------------------------------------------------------------------------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    /* Base */
+    --color-ink: var(--sem-ink);
+    --color-ink-dim: var(--sem-ink-dim);
+    --color-ink-faint: var(--sem-ink-faint);
+    --color-ink-flip: var(--sem-ink-flip);
+    --color-fill: var(--sem-fill);
+    --color-fill-raised: var(--sem-fill-raised);
+    --color-fill-dark: var(--sem-fill-dark);
+    --color-fill-light: var(--sem-fill-light);
+    --color-fill-muted: var(--sem-fill-muted);
+    --color-fill-strong: var(--sem-fill-strong);
+
+    /* Brand */
+    --color-brand-ink: var(--sem-brand-ink);
+    --color-brand-ink-flip: var(--sem-brand-ink-flip);
+    --color-brand: var(--sem-brand);
+    --color-brand-fill: var(--sem-brand-fill);
+
+    /* Misc */
+    --color-border: var(--sem-border);
+    --color-link: var(--sem-link);
+    --color-error-ink: var(--sem-error-ink);
+    --color-error: var(--sem-error);
+    --color-error-fill: var(--sem-error-fill);
+
+    /* Typing surface — the test text has its own vocabulary because "grey word
+     not yet typed" is a different role from "secondary UI label", and the two
+     want different contrast. */
+    --color-type-pending: var(--sem-type-pending);
+    --color-type-correct: var(--sem-type-correct);
+    --color-type-error: var(--sem-type-error);
+    --color-type-extra: var(--sem-type-extra);
+    --color-caret: var(--sem-caret);
+
+    /* Rivals — up to four opponents in a race; the local player always uses
+     the brand purple, so these only have to be distinct from purple and from
+     each other. */
+    --color-rival-1: var(--sem-rival-1);
+    --color-rival-2: var(--sem-rival-2);
+    --color-rival-3: var(--sem-rival-3);
+    --color-rival-4: var(--sem-rival-4);
+
+    /* Results chart. An emphasis palette, not a categorical one: net wpm is the
+     point, raw is context in grey, errors are a reserved status colour carried
+     by an × glyph so identity is never colour alone. These steps are validated
+     against both surfaces for lightness band, CVD separation, and contrast —
+     re-run the check before changing them. */
+    --color-series-wpm: var(--sem-series-wpm);
+    --color-series-raw: var(--sem-series-raw);
+    --color-series-error: var(--sem-series-error);
+
+    /* Fonts — sans for UI, mono for the typing surface. Both are set on <html>
+     by next/font; `inline` means the utilities reference those vars directly
+     rather than re-declaring them here. */
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --font-heading: var(--font-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Light theme (default) */
+:root {
+    color-scheme: light;
+
+    --font-primary: var(--font-sans);
+    --font-secondary: var(--font-sans);
+
+    --sem-ink: var(--color-neutral-900);
+    --sem-ink-dim: var(--color-neutral-600);
+    --sem-ink-faint: var(--color-neutral-400);
+    --sem-ink-flip: var(--color-neutral-50);
+    --sem-fill: var(--color-neutral-50);
+    --sem-fill-raised: var(--color-neutral-100);
+    --sem-fill-dark: var(--color-neutral-950);
+    --sem-fill-light: var(--color-neutral-50);
+    --sem-fill-muted: var(--color-neutral-200);
+    --sem-fill-strong: var(--color-neutral-300);
+
+    --sem-brand-ink: var(--color-accent-600);
+    --sem-brand-ink-flip: var(--color-neutral-50);
+    --sem-brand: var(--color-accent-500);
+    --sem-brand-fill: var(--color-accent-600);
+
+    --sem-border: var(--color-neutral-200);
+    --sem-link: var(--color-accent-600);
+    --sem-error-ink: var(--color-error-600);
+    --sem-error: var(--color-error-500);
+    --sem-error-fill: var(--color-error-100);
+
+    --sem-type-pending: var(--color-neutral-400);
+    --sem-type-correct: var(--color-neutral-900);
+    --sem-type-error: var(--color-error-600);
+    --sem-type-extra: var(--color-error-300);
+    --sem-caret: var(--color-accent-600);
+
+    /* Rival hues, searched rather than chosen: with the brand purple pinned as
+     slot 0, these four maximise the worst *all-pairs* colourblind separation.
+     All-pairs, not adjacent, because rival carets land next to each other in
+     any order. An earlier hand-picked set had a rose/green pair at ΔE 1.0
+     under deuteranopia — indistinguishable — which is disqualifying when the
+     colour is how you tell one racer from another. */
+    --sem-rival-1: oklch(0.6 0.19 140); /* green   */
+    --sem-rival-2: oklch(0.48 0.1 240); /* blue    */
+    --sem-rival-3: oklch(0.66 0.1 350); /* pink    */
+    --sem-rival-4: oklch(0.48 0.19 20); /* crimson */
+
+    --sem-series-wpm: var(--color-accent-600);
+    --sem-series-raw: var(--color-neutral-500);
+    --sem-series-error: var(--color-error-600);
+
+    /* Scrollbar thumb, tuned per theme */
+    --scrollbar: var(--color-neutral-200);
+    --scrollbar-hover: var(--color-neutral-400);
+}
+
+/* Dark theme */
+.dark {
+    color-scheme: dark;
+
+    --sem-ink: var(--color-neutral-100);
+    --sem-ink-dim: var(--color-neutral-400);
+    --sem-ink-faint: var(--color-neutral-600);
+    --sem-ink-flip: var(--color-neutral-950);
+    --sem-fill: var(--color-neutral-950);
+    --sem-fill-raised: var(--color-neutral-900);
+    --sem-fill-dark: var(--color-neutral-950);
+    --sem-fill-light: var(--color-neutral-50);
+    --sem-fill-muted: var(--color-neutral-800);
+    --sem-fill-strong: var(--color-neutral-700);
+
+    --sem-brand-ink: var(--color-accent-400);
+    --sem-brand-ink-flip: var(--color-neutral-950);
+    --sem-brand: var(--color-accent-500);
+    --sem-brand-fill: var(--color-accent-500);
+
+    --sem-border: var(--color-neutral-800);
+    --sem-link: var(--color-accent-400);
+    --sem-error-ink: var(--color-error-400);
+    --sem-error: var(--color-error-500);
+    --sem-error-fill: var(--color-error-950);
+
+    --sem-type-pending: var(--color-neutral-600);
+    --sem-type-correct: var(--color-neutral-100);
+    --sem-type-error: var(--color-error-400);
+    --sem-type-extra: var(--color-error-800);
+    --sem-caret: var(--color-accent-400);
+
+    /* Re-searched against the dark surface rather than lightened from the light
+     values — the dark lightness band is narrower, so a straight flip fails. */
+    --sem-rival-1: oklch(0.59 0.19 140); /* green */
+    --sem-rival-2: oklch(0.5 0.1 260); /* blue  */
+    --sem-rival-3: oklch(0.5 0.16 15); /* red   */
+    --sem-rival-4: oklch(0.65 0.1 335); /* pink  */
+
+    /* Stepped down from the ink values: on the dark surface the 400 steps sit
+     above the dark lightness band and the red/grey pair falls into the CVD
+     warn band. The 500s pass both. */
+    --sem-series-wpm: var(--color-accent-500);
+    --sem-series-raw: var(--color-neutral-500);
+    --sem-series-error: var(--color-error-500);
+
+    --scrollbar: var(--color-neutral-800);
+    --scrollbar-hover: var(--color-neutral-700);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-brand/50;
+    }
+}
+
+/* Base styles */
+html {
+    scroll-behavior: smooth;
+    @apply bg-fill;
+}
+
+/* Custom scrollbar — themed thumb on a transparent track. Modern
+   Chrome/Firefox use the standard properties; the -webkit rules cover Safari,
+   where the standard properties aren't supported yet. */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    @apply bg-fill font-[550] font-stretch-110% tracking-wide text-ink;
+    font-family: var(--font-secondary), sans-serif;
+}
+
+/* Every heading gets the display family and width — components should not
+   repeat font-stretch-120% on their own <h1>–<h6>. Layered in `base` so a
+   font-stretch-* / font-* utility can still override it where a heading
+   genuinely needs something else. */
+@layer base {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-stretch-120%;
+        font-family: var(--font-primary), sans-serif;
+    }
+}
+
+/* Lucide icons */
+/* icon-N sizes like size-N and compensates stroke-width so it renders at
+   --stroke-width px at any icon size (24 viewBox units / 4px spacing = 6) */
+@utility icon-* {
+    width: calc(var(--spacing) * --value(number));
+    height: calc(var(--spacing) * --value(number));
+    stroke-width: calc(var(--stroke-width) * 6 / --value(number) * 1px);
+}
+
+/* Bold variant, still a thikker boy: compose as "icon-5 icon-bold" */
+@utility icon-bold {
+    --stroke-width: 2.5;
+}
+
+/* Fallback for icons without icon-*: exact at natural 24px size */
+@layer base {
+    .lucide {
+        stroke-width: calc(var(--stroke-width) * 1px);
+    }
+}
+
+/* ----------------------------------------------------------------------------
+   Typing surface
+---------------------------------------------------------------------------- */
+
+/* The caret blinks only while idle — any keystroke sets data-typing on the
+   word stream, which pauses the animation so the caret stays solid and
+   trackable mid-burst. */
+@keyframes caret-blink {
+    0%,
+    45% {
+        opacity: 1;
+    }
+    50%,
+    95% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.caret-blink {
+    animation: caret-blink 1s steps(1, end) infinite;
+}
+
+[data-typing="true"] .caret-blink {
+    animation: none;
+    opacity: 1;
+}
+
+/* Respect the OS setting: a blinking block is exactly the kind of motion
+   people turn this on to avoid. */
+@media (prefers-reduced-motion: reduce) {
+    .caret-blink {
+        animation: none;
+        opacity: 1;
+    }
 }
