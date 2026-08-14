@@ -37,7 +37,7 @@ export function Spectate({ snapshot }: { snapshot: RaceSnapshot }) {
     <div className="flex w-full max-w-5xl flex-col gap-8">
       <div className="flex flex-col items-center gap-1 text-center">
         <h1 className="text-2xl">race in progress</h1>
-        <p className="font-mono text-ink-dim text-sm">
+        <p className="text-ink-dim text-sm">
           {snapshot.status === "countdown" ? "they are about to start — " : ""}
           you&apos;ll join automatically when this round ends
         </p>

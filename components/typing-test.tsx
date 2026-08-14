@@ -145,7 +145,7 @@ export function TypingTest({ settingsOpen }: { settingsOpen: boolean }) {
           </div>
 
           <div className="flex flex-col items-center gap-4">
-            <p className="font-mono text-ink-faint text-xs">
+            <p className="text-ink-faint text-xs">
               {settings.quickRestart ? (
                 <>
                   <Key>tab</Key> restart test
@@ -179,7 +179,7 @@ function LiveBar({
   return (
     <div
       className={cn(
-        "mb-3 flex h-8 items-baseline gap-5 font-mono text-2xl text-brand-ink tabular-nums transition-opacity duration-200",
+        "mb-3 flex h-8 items-baseline gap-5 text-2xl text-brand-ink transition-opacity duration-200",
         // invisible but present before the start, so nothing shifts on the first key
         show && running ? "opacity-100" : "opacity-0",
       )}

@@ -4,7 +4,7 @@ import { Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-/** Creates a room and drops you into its lobby with a link to share. */
+/** creates a room and drops you into its lobby */
 export function StartRaceButton() {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -28,12 +28,12 @@ export function StartRaceButton() {
             setBusy(false);
           }
         }}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-2 px-3 py-1.5 font-mono text-ink-faint text-sm transition-colors hover:bg-fill-muted hover:text-ink disabled:opacity-50"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-2 px-3 py-1.5 text-ink-faint text-sm transition-colors hover:bg-fill-muted hover:text-ink disabled:opacity-50"
       >
         <Users className="icon-4" />
         {busy ? "starting…" : "race a friend"}
       </button>
-      {error && <span className="font-mono text-error-ink text-xs">{error}</span>}
+      {error && <span className="text-error-ink text-xs">{error}</span>}
     </div>
   );
 }

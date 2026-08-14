@@ -4,14 +4,8 @@ import type { RaceSnapshot } from "@/lib/race/types";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Server-sent events: one long-lived response per player, carrying a room
- * snapshot whenever anything changes and at 10Hz while a race is running.
- *
- * SSE rather than WebSockets because Next route handlers speak it natively —
- * no custom server, no upgrade handling. The cost is that the client→server
- * direction is ordinary POSTs, which for five players at 10Hz is fine.
- */
+// SSE, not WebSockets — Next route handlers speak it natively, no custom
+// server. The upstream direction is plain POSTs, which is fine at this scale.
 export async function GET(request: NextRequest, context: RouteContext<"/api/race/[roomId]/stream">) {
   const { roomId } = await context.params;
   const playerId = request.nextUrl.searchParams.get("playerId");
@@ -32,8 +26,7 @@ export async function GET(request: NextRequest, context: RouteContext<"/api/race
         try {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(snapshot)}\n\n`));
         } catch {
-          // The client vanished between the room's broadcast and this write;
-          // the abort handler below does the actual cleanup.
+          // client vanished mid-write; the abort handler does the real cleanup
           closed = true;
         }
       };
@@ -45,7 +38,7 @@ export async function GET(request: NextRequest, context: RouteContext<"/api/race
         return;
       }
 
-      // Comment frames keep proxies from closing an idle lobby connection.
+      // comment frames keep proxies from closing an idle lobby connection
       heartbeat = setInterval(() => {
         if (closed) return;
         try {
@@ -63,7 +56,7 @@ export async function GET(request: NextRequest, context: RouteContext<"/api/race
         try {
           controller.close();
         } catch {
-          // Already closed by the runtime.
+          // already closed by the runtime
         }
       };
 
@@ -81,8 +74,7 @@ export async function GET(request: NextRequest, context: RouteContext<"/api/race
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
-      // Nginx and friends buffer streamed responses by default, which would
-      // hold every countdown frame until the race was over.
+      // nginx buffers streamed responses by default
       "X-Accel-Buffering": "no",
     },
   });

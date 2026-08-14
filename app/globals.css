@@ -162,20 +162,18 @@
     --color-rival-3: var(--sem-rival-3);
     --color-rival-4: var(--sem-rival-4);
 
-    /* Results chart. An emphasis palette, not a categorical one: net wpm is the
-     point, raw is context in grey, errors are a reserved status colour carried
-     by an × glyph so identity is never colour alone. These steps are validated
-     against both surfaces for lightness band, CVD separation, and contrast —
-     re-run the check before changing them. */
+    /* Results chart — emphasis palette: net wpm is the point, raw is grey
+     context, errors are a status colour. Validated on both surfaces for
+     lightness, CVD separation, and contrast — re-run the check if changed. */
     --color-series-wpm: var(--sem-series-wpm);
     --color-series-raw: var(--sem-series-raw);
     --color-series-error: var(--sem-series-error);
 
-    /* Fonts — sans for UI, mono for the typing surface. Both are set on <html>
-     by next/font; `inline` means the utilities reference those vars directly
-     rather than re-declaring them here. */
+    /* One typeface for everything: Mona Sans, set on <html> by next/font.
+     `inline` means the utilities reference the var directly rather than
+     re-declaring it. Digits are made width-stable app-wide by the
+     font-variant-numeric rule on body below. */
     --font-sans: var(--font-sans);
-    --font-mono: var(--font-mono);
     --font-heading: var(--font-primary);
 }
 
@@ -214,12 +212,9 @@
     --sem-type-extra: var(--color-error-300);
     --sem-caret: var(--color-accent-600);
 
-    /* Rival hues, searched rather than chosen: with the brand purple pinned as
-     slot 0, these four maximise the worst *all-pairs* colourblind separation.
-     All-pairs, not adjacent, because rival carets land next to each other in
-     any order. An earlier hand-picked set had a rose/green pair at ΔE 1.0
-     under deuteranopia — indistinguishable — which is disqualifying when the
-     colour is how you tell one racer from another. */
+    /* Rival hues, searched not hand-picked: with brand purple pinned as slot 0,
+     these maximise the worst all-pairs CVD separation (carets land next to
+     each other in any order). Re-run the check before changing them. */
     --sem-rival-1: oklch(0.6 0.19 140); /* green   */
     --sem-rival-2: oklch(0.48 0.1 240); /* blue    */
     --sem-rival-3: oklch(0.66 0.1 350); /* pink    */
@@ -324,8 +319,12 @@ html {
 }
 
 body {
-    @apply bg-fill font-[550] font-stretch-110% tracking-wide text-ink;
+    @apply bg-fill font-[550] font-stretch-112% tracking-wide text-ink;
     font-family: var(--font-secondary), sans-serif;
+    /* Tabular figures everywhere. Mona Sans digits are strongly proportional
+       (a 1 is ~40% narrower than an 8), so without this every ticking readout
+       — live wpm, countdowns, standings — wobbles as values change width. */
+    font-variant-numeric: tabular-nums;
 }
 
 /* Every heading gets the display family and width — components should not

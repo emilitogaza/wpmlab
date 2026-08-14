@@ -35,9 +35,8 @@ function Switch({
       )}
       {...props}
     >
-      {/* Plain motion span instead of SwitchPrimitive.Thumb — the Radix Slot
-          (asChild) breaks Motion's animate-prop updates, and the thumb is
-          purely visual anyway. */}
+      {/* plain motion span, not SwitchPrimitive.Thumb — the Radix asChild Slot
+          breaks Motion's animate updates, and the thumb is purely visual */}
       <m.span
         data-slot="switch-thumb"
         data-state={isChecked ? "checked" : "unchecked"}

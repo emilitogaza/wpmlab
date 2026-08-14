@@ -28,7 +28,7 @@ const CHAR_CLASS: Record<CharStatus, string> = {
   extra: "text-type-extra",
 };
 
-type CaretBox = { left: number; top: number; height: number };
+type CaretBox = { left: number; top: number; height: number; width: number };
 
 /** a remote player's caret: char index + colour slot */
 export type RivalCaret = {
@@ -59,18 +59,32 @@ function measureChar(container: HTMLElement, wordIndex: number, charIndex: numbe
 
   const chars = wordEl.children;
 
+  // width comes from the actual glyph: Mona Sans is proportional, so "one
+  // character wide" is only meaningful per character — an i-cell and a w-cell
+  // are different sizes, and the block/underline carets must match the glyph
+  // they sit on.
   if (charIndex < chars.length) {
     const el = chars[charIndex] as HTMLElement;
-    return { left: el.offsetLeft, top: el.offsetTop, height: el.offsetHeight };
+    return { left: el.offsetLeft, top: el.offsetTop, height: el.offsetHeight, width: el.offsetWidth };
   }
 
   if (chars.length > 0) {
-    // past the last char — park on its trailing edge
+    // past the last char — park on its trailing edge, reusing that glyph's width
     const el = chars[chars.length - 1] as HTMLElement;
-    return { left: el.offsetLeft + el.offsetWidth, top: el.offsetTop, height: el.offsetHeight };
+    return {
+      left: el.offsetLeft + el.offsetWidth,
+      top: el.offsetTop,
+      height: el.offsetHeight,
+      width: el.offsetWidth,
+    };
   }
 
-  return { left: wordEl.offsetLeft, top: wordEl.offsetTop, height: wordEl.offsetHeight };
+  return {
+    left: wordEl.offsetLeft,
+    top: wordEl.offsetTop,
+    height: wordEl.offsetHeight,
+    width: wordEl.offsetHeight * 0.5,
+  };
 }
 
 export function WordStream({
@@ -144,7 +158,7 @@ export function WordStream({
     <div
       data-typing={typing}
       className={cn(
-        "relative w-full overflow-hidden font-mono transition-[filter,opacity] duration-200",
+        "relative w-full overflow-hidden transition-[filter,opacity] duration-200",
         FONT_SIZE_CLASS[fontSize],
         // three lines at 1.6 line-height
         "h-[4.8em]",
@@ -156,7 +170,11 @@ export function WordStream({
         initial={false}
         animate={{ y: -scroll }}
         transition={{ duration: 0.15, ease: "easeOut" }}
-        className="relative flex flex-wrap gap-x-[1ch] gap-y-0"
+        // word gap: Mona Sans's own space glyph is 0.225em and its "0" (= 1ch) is
+        // 0.662em, so a 1ch gap reads ~3x too wide in this face. 0.3em is a
+        // touch wider than a natural space — word boundaries stay clear while
+        // typing — and em-based, so it tracks the font-size setting.
+        className="relative flex flex-wrap gap-x-[0.3em] gap-y-0"
       >
         {words.map((word, index) => (
           <Word
@@ -233,20 +251,22 @@ const Word = memo(function Word({ index, target, typed, isPast, blind }: WordPro
 });
 
 function Caret({ box, style, smooth }: { box: CaretBox; style: CaretStyle; smooth: boolean }) {
-  // block and line sit on the text body; underline drops below the baseline
+  // block and line sit on the text body; underline drops below the baseline.
+  // widths track the measured glyph, since the face is proportional.
   const geometry =
     style === "underline"
-      ? { width: "1ch", height: "2px", top: box.top + box.height * 0.82 }
-      : { width: style === "block" ? "1ch" : "2px", height: box.height * 0.72, top: box.top + box.height * 0.14 };
+      ? { width: box.width, height: 2, top: box.top + box.height * 0.82 }
+      : { width: style === "block" ? box.width : 2, height: box.height * 0.72, top: box.top + box.height * 0.14 };
 
   return (
     <m.span
       aria-hidden
       initial={false}
-      animate={{ x: box.left, y: geometry.top }}
+      animate={{ x: box.left, y: geometry.top, width: geometry.width }}
       transition={smooth ? { type: "spring", stiffness: 900, damping: 55, mass: 0.4 } : { duration: 0 }}
-      style={{ width: geometry.width, height: geometry.height }}
-      // the block caret covers its character, so it runs at low opacity
+      style={{ height: geometry.height }}
+      // the block caret covers its glyph, so it runs at low opacity — you
+      // still have to be able to read the letter you are aiming for
       className={cn(
         "pointer-events-none absolute top-0 left-0 rounded-[1px] bg-caret caret-blink",
         style === "block" && "opacity-35",
@@ -255,9 +275,6 @@ function Caret({ box, style, smooth }: { box: CaretBox; style: CaretStyle; smoot
   );
 }
 
-// coloured bar + name. the name isn't decoration — it carries identity when
-// two colours are hard to tell apart, so don't drop it. the spring smooths
-// the 10Hz position updates into something that reads as typing.
 function RivalMarker({ rival, box }: { rival: RivalCaret; box: CaretBox }) {
   return (
     <m.span
@@ -271,7 +288,7 @@ function RivalMarker({ rival, box }: { rival: RivalCaret; box: CaretBox }) {
       <span className={cn("absolute top-0 bottom-0 w-[2px] rounded-[1px] opacity-80", raceColorBg(rival.colorIndex))} />
       <span
         className={cn(
-          "absolute -top-[0.55em] whitespace-nowrap font-sans text-[0.34em] leading-none tracking-wide",
+          "absolute -top-[0.55em] whitespace-nowrap text-[0.34em] leading-none tracking-wide",
           raceColorText(rival.colorIndex),
         )}
       >

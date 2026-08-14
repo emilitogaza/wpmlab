@@ -11,8 +11,7 @@ export async function GET(_request: NextRequest, context: RouteContext<"/api/rac
   return Response.json(snapshot);
 }
 
-/** The largest honest action is a finish with ~120 samples, a few kilobytes.
- *  Anything near this limit is someone probing, not someone racing. */
+// an honest finish is a few KB; anything near this limit is someone probing
 const MAX_BODY_BYTES = 256 * 1024;
 
 export async function POST(request: NextRequest, context: RouteContext<"/api/race/[roomId]">) {

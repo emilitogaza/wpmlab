@@ -147,7 +147,7 @@ export function SettingsDialog({ open, onOpenChange }: { open: boolean; onOpenCh
             <button
               type="button"
               onClick={resetSettings}
-              className="cursor-pointer font-mono text-ink-faint text-sm transition-colors hover:text-error-ink"
+              className="cursor-pointer text-ink-faint text-sm transition-colors hover:text-error-ink"
             >
               reset to defaults
             </button>
@@ -161,7 +161,7 @@ export function SettingsDialog({ open, onOpenChange }: { open: boolean; onOpenCh
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-5">
-      <h3 className="font-mono text-brand-ink text-sm">{title}</h3>
+      <h3 className="text-brand-ink text-sm">{title}</h3>
       {children}
     </section>
   );
@@ -180,7 +180,7 @@ function ToggleRow({ label, description, checked, disabled, disabledReason, onCh
   return (
     <div className={cn("flex items-start justify-between gap-6", disabled && "opacity-50")}>
       <div className="min-w-0">
-        <div className="font-mono text-ink text-sm">{label}</div>
+        <div className="text-ink text-sm">{label}</div>
         <p className="mt-0.5 text-ink-dim text-sm leading-snug">
           {disabled && disabledReason ? disabledReason : description}
         </p>
@@ -214,7 +214,7 @@ function TextRow({
   return (
     <div className="flex items-start justify-between gap-6">
       <div className="min-w-0">
-        <label htmlFor={id} className="font-mono text-ink text-sm">
+        <label htmlFor={id} className="text-ink text-sm">
           {label}
         </label>
         <p className="mt-0.5 text-ink-dim text-sm leading-snug">{description}</p>
@@ -226,7 +226,7 @@ function TextRow({
         placeholder={placeholder}
         autoComplete="off"
         onChange={(event) => onChange(event.target.value.slice(0, 16))}
-        className="w-36 shrink-0 rounded-1_5 bg-fill-muted px-3 py-1.5 font-mono text-ink text-sm outline-none placeholder:text-ink-faint focus-visible:outline-2 focus-visible:outline-brand/60"
+        className="w-36 shrink-0 rounded-1_5 bg-fill-muted px-3 py-1.5 text-ink text-sm outline-none placeholder:text-ink-faint focus-visible:outline-2 focus-visible:outline-brand/60"
       />
     </div>
   );
@@ -245,7 +245,7 @@ function ChoiceRow<T extends string>({
 }) {
   return (
     <div className="flex items-center justify-between gap-6">
-      <div className="font-mono text-ink text-sm">{label}</div>
+      <div className="text-ink text-sm">{label}</div>
       <ChipGroup className="bg-fill-muted">
         {options.map((option) => (
           <Chip key={option} active={value === option} onClick={() => onChange(option)}>

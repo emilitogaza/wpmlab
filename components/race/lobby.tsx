@@ -43,10 +43,10 @@ export function Lobby({
             )}
           >
             <span className={cn("size-3 shrink-0 rounded-full", raceColorBg(player.colorIndex))} />
-            <span className={cn("font-mono text-sm", raceColorText(player.colorIndex))}>{player.name}</span>
-            {player.id === meId && <span className="font-mono text-ink-faint text-xs">you</span>}
+            <span className={cn("text-sm", raceColorText(player.colorIndex))}>{player.name}</span>
+            {player.id === meId && <span className="text-ink-faint text-xs">you</span>}
             {player.isHost && <Crown className="icon-3.5 text-ink-faint" aria-label="host" />}
-            {!player.connected && <span className="ml-auto font-mono text-ink-faint text-xs">offline</span>}
+            {!player.connected && <span className="ml-auto text-ink-faint text-xs">offline</span>}
           </li>
         ))}
 
@@ -54,7 +54,7 @@ export function Lobby({
         {Array.from({ length: Math.max(0, MAX_PLAYERS - players.length) }, (_, i) => players.length + i).map((slot) => (
           <li
             key={`seat-${slot}`}
-            className="rounded-2 border border-border border-dashed px-4 py-3 font-mono text-ink-faint text-sm"
+            className="rounded-2 border border-border border-dashed px-4 py-3 text-ink-faint text-sm"
           >
             waiting for a player…
           </li>
@@ -68,17 +68,17 @@ export function Lobby({
             type="button"
             onClick={onStart}
             disabled={connected.length === 0}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-2 bg-brand-fill px-5 py-2.5 font-mono text-brand-ink-flip text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-2 bg-brand-fill px-5 py-2.5 text-brand-ink-flip text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Play className="icon-4" />
             start race
           </button>
           {connected.length === 1 && (
-            <p className="font-mono text-ink-faint text-xs">you can start solo, but it is more fun with company</p>
+            <p className="text-ink-faint text-xs">you can start solo, but it is more fun with company</p>
           )}
         </div>
       ) : (
-        <p className="font-mono text-ink-dim text-sm">waiting for the host to start…</p>
+        <p className="text-ink-dim text-sm">waiting for the host to start…</p>
       )}
     </div>
   );
@@ -103,7 +103,7 @@ function ShareLink({ roomId }: { roomId: string }) {
           // clipboard denied — the link is on screen to copy by hand
         }
       }}
-      className="flex cursor-pointer items-center gap-2 rounded-2 bg-fill-raised px-3 py-2 font-mono text-ink-dim text-sm transition-colors hover:bg-fill-muted hover:text-ink"
+      className="flex cursor-pointer items-center gap-2 rounded-2 bg-fill-raised px-3 py-2 text-ink-dim text-sm transition-colors hover:bg-fill-muted hover:text-ink"
     >
       {copied ? <Check className="icon-4 text-brand-ink" /> : <Copy className="icon-4" />}
       <span className="max-w-[22rem] truncate">{url || `/race/${roomId}`}</span>

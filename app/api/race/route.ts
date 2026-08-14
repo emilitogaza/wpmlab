@@ -1,6 +1,6 @@
 import { createRoom } from "@/lib/race/store";
 
-/** Rooms live in this process's memory, so nothing here can be prerendered. */
+// rooms live in memory — never prerender
 export const dynamic = "force-dynamic";
 
 export async function POST() {

@@ -21,7 +21,7 @@ const MODES: { value: TestMode; label: string; icon: React.ReactNode }[] = [
 type ConfigBarProps = {
   config: TestConfig;
   onChange: (patch: Partial<TestConfig>) => void;
-  /** Hidden while typing, the way monkeytype gets out of your way. */
+  /** hidden while typing */
   hidden: boolean;
 };
 
@@ -33,8 +33,7 @@ export function ConfigBar({ config, onChange, hidden }: ConfigBarProps) {
       initial={false}
       animate={{ opacity: hidden ? 0 : 1 }}
       transition={{ duration: 0.15 }}
-      // Kept in the layout when hidden so the typing surface never shifts, but
-      // taken out of the tab order so it cannot be focused invisibly.
+      // stays in the layout when hidden (no shift), but out of the tab order
       inert={hidden}
       className="flex flex-wrap items-center justify-center gap-2"
     >

@@ -3,19 +3,12 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * The toggle pattern from the config bar: a rounded tray of flat text buttons
- * that carry no border or background of their own and simply light up in the
- * brand colour when active. Cheap to scan, and it keeps the bar quiet while
- * you are actually typing.
- */
+// Rounded tray of flat text buttons that light up in the brand colour when
+// active — the config bar's toggle pattern.
 
 export function ChipGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("flex items-center gap-1 rounded-2 bg-fill-raised px-2 py-1.5 font-mono text-sm", className)}
-      {...props}
-    />
+    <div className={cn("flex items-center gap-1 rounded-2 bg-fill-raised px-2 py-1.5 text-sm", className)} {...props} />
   );
 }
 
@@ -33,8 +26,7 @@ export function Chip({ className, active = false, icon, children, ...props }: Ch
     <button
       type="button"
       data-active={active}
-      // aria-pressed rather than a role change: these really are toggles, and a
-      // screen reader should hear the state, not just see the colour.
+      // these really are toggles — screen readers should hear the state
       aria-pressed={active}
       className={cn(
         "inline-flex cursor-pointer items-center gap-1.5 rounded-1_5 px-2.5 py-1 transition-colors",

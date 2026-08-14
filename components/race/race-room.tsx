@@ -94,10 +94,8 @@ export function RaceRoom({ roomId }: { roomId: string }) {
           <Spectate snapshot={snapshot} />
         )}
 
-        {settings.playerName && !live && (
-          <p className="mt-8 font-mono text-error-ink text-xs">connection lost — reconnecting…</p>
-        )}
-        {shownError && snapshot && <p className="mt-4 font-mono text-error-ink text-xs">{shownError}</p>}
+        {settings.playerName && !live && <p className="mt-8 text-error-ink text-xs">connection lost — reconnecting…</p>}
+        {shownError && snapshot && <p className="mt-4 text-error-ink text-xs">{shownError}</p>}
       </main>
 
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
@@ -108,8 +106,8 @@ export function RaceRoom({ roomId }: { roomId: string }) {
 function Status({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center gap-4">
-      <p className="font-mono text-ink-dim text-sm">{children}</p>
-      <Link href="/" className="font-mono text-ink-faint text-xs underline-offset-4 hover:underline">
+      <p className="text-ink-dim text-sm">{children}</p>
+      <Link href="/" className="text-ink-faint text-xs underline-offset-4 hover:underline">
         back to solo
       </Link>
     </div>
@@ -129,7 +127,7 @@ function NameGate({ onSubmit }: { onSubmit: (name: string) => void }) {
       }}
       className="flex w-full max-w-sm flex-col gap-4"
     >
-      <label htmlFor="race-name" className="font-mono text-ink-dim text-sm">
+      <label htmlFor="race-name" className="text-ink-dim text-sm">
         what should the others call you?
       </label>
       <input
@@ -141,12 +139,12 @@ function NameGate({ onSubmit }: { onSubmit: (name: string) => void }) {
         // biome-ignore lint/a11y/noAutofocus: the only interactive element on the screen, and the user came here to type
         autoFocus
         placeholder="name"
-        className="rounded-2 bg-fill-raised px-4 py-3 font-mono text-ink outline-none placeholder:text-ink-faint focus-visible:outline-2 focus-visible:outline-brand/60"
+        className="rounded-2 bg-fill-raised px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus-visible:outline-2 focus-visible:outline-brand/60"
       />
       <button
         type="submit"
         disabled={!value.trim()}
-        className="cursor-pointer rounded-2 bg-brand-fill px-4 py-2.5 font-mono text-brand-ink-flip text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="cursor-pointer rounded-2 bg-brand-fill px-4 py-2.5 text-brand-ink-flip text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         join race
       </button>

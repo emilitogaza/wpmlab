@@ -11,7 +11,7 @@ export function SiteHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
         <Keyboard className="icon-7 text-brand-ink" />
         <div className="leading-none">
           <span className="block font-stretch-120% text-2xl">wpmlab</span>
-          <span className="block font-mono text-[0.625rem] text-ink-faint">type fast like a gremlin</span>
+          <span className="block text-[0.625rem] text-ink-faint">type fast like a gremlin</span>
         </div>
       </div>
 

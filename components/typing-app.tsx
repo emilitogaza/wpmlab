@@ -5,10 +5,8 @@ import { SettingsDialog } from "@/components/settings-dialog";
 import { SiteHeader } from "@/components/site-header";
 import { TypingTest } from "@/components/typing-test";
 
-/**
- * Owns the one piece of state the header and the test have to agree on: while
- * the settings dialog is open the test must stop swallowing keystrokes.
- */
+// Owns the one piece of shared state: while the settings dialog is open the
+// test must stop swallowing keystrokes.
 export function TypingApp() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 

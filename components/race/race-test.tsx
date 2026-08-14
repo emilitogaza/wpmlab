@@ -252,7 +252,7 @@ export function RaceTest({
   return (
     <div className="flex w-full max-w-5xl flex-col gap-8">
       <div className="relative">
-        <div className="mb-3 flex h-8 items-baseline gap-5 font-mono text-2xl text-brand-ink tabular-nums">
+        <div className="mb-3 flex h-8 items-baseline gap-5 text-2xl text-brand-ink">
           {running && snapshot.config.mode === "time" && <span>{Math.ceil(remainingSeconds(state, now))}</span>}
           {running && snapshot.config.mode !== "time" && (
             <span>
@@ -288,7 +288,7 @@ export function RaceTest({
               key={countdown}
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="font-mono text-8xl text-brand-ink tabular-nums"
+              className="font-stretch-120% text-8xl text-brand-ink"
             >
               {countdown}
             </m.span>

@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Mona_Sans } from "next/font/google";
+import { Mona_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
+// The one and only typeface. Numbers stay width-stable everywhere because the
+// base styles apply tabular figures globally (font-variant-numeric on body) —
+// without that, Mona Sans digits are strongly proportional (a "1" is ~40%
+// narrower than an "8") and every live readout would jitter as values tick.
 const monaSans = Mona_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
   axes: ["wdth"],
-});
-
-// The typing surface has to be monospaced or the caret shifts as characters
-// resolve; JetBrains Mono also disambiguates l/1/I and 0/O, which matters once
-// a test includes numbers.
-const jetBrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${monaSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
+      className={`${monaSans.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >

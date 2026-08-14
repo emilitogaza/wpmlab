@@ -62,10 +62,11 @@ Theme-dependent values are defined via `--sem-*` vars in `:root`/`.dark` (next-t
 
 ## Typography
 
-- UI uses `var(--font-primary)` / `var(--font-secondary)` (both Mona Sans); base styles apply them, so don't add font-family classes per component.
-- The typing surface uses `font-mono` (JetBrains Mono). Mono is required there — a proportional face makes the caret jump around as characters resolve.
-- Body baseline is `font-[550] font-stretch-110% tracking-wide`; use `font-stretch-*` (not `font-variation-settings`) for width.
-- `<h1>`–`<h6>` get `font-stretch-120%` from base styles — don't repeat it on headings. It's layered in `base`, so a `font-stretch-*` class still wins where a heading genuinely needs a different width. Non-heading elements styled as titles (a wordmark `<span>`, say) still need the class.
+**One typeface: Mona Sans.** There is deliberately no second font — do not reintroduce `font-mono` or a mono face; the base styles apply the family, so don't add font-family classes per component.
+
+- **Digits are tabular app-wide** (`font-variant-numeric: tabular-nums` on `body`). This is load-bearing, not taste: Mona Sans digits are strongly proportional (a `1` is ~40% narrower than an `8`), so without it every ticking readout — live wpm, countdowns, standings — wobbles as values change width. Never override it on numeric UI.
+- **Widths:** body baseline is `font-[550] font-stretch-112% tracking-wide` — buttons and body text are 112 by default, from globals. `<h1>`–`<h6>` get `font-stretch-120%` from base styles — don't repeat it on headings. Display-scale text that isn't a heading (hero figures, the countdown, a wordmark `<span>`) gets the `font-stretch-120%` class explicitly. Use `font-stretch-*` (not `font-variation-settings`) for width.
+- **The typing surface is proportional now**, which the caret machinery is built for: carets and rival markers are DOM-measured per character (`measureChar` in word-stream.tsx returns the glyph's own width, and block/underline carets take it). Never reintroduce `1ch`-cell assumptions — "one character wide" is only meaningful per glyph in this face.
 - Extended display sizes `text-8xl` … `text-12xl` are available.
 
 ## Breakpoints

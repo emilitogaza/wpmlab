@@ -38,7 +38,7 @@ export function RaceChart({ players }: { players: RacePlayer[] }) {
 
   return (
     <div className="w-full">
-      <div className="mb-2 flex flex-wrap items-center gap-4 font-mono text-ink-dim text-xs">
+      <div className="mb-2 flex flex-wrap items-center gap-4 text-ink-dim text-xs">
         {finished.map((player) => (
           <span key={player.id} className="flex items-center gap-1.5">
             <span className={cn("h-0.5 w-4 rounded-full", raceColorBg(player.colorIndex))} />
@@ -65,7 +65,7 @@ export function RaceChart({ players }: { players: RacePlayer[] }) {
                   y={y(tick)}
                   textAnchor="end"
                   dominantBaseline="middle"
-                  className="fill-ink-faint font-mono text-[10px]"
+                  className="fill-ink-faint text-[10px]"
                 >
                   {tick}
                 </text>
@@ -78,7 +78,7 @@ export function RaceChart({ players }: { players: RacePlayer[] }) {
                 x={x(second)}
                 y={HEIGHT - 8}
                 textAnchor="middle"
-                className="fill-ink-faint font-mono text-[10px]"
+                className="fill-ink-faint text-[10px]"
               >
                 {second}
               </text>
@@ -103,7 +103,7 @@ export function RaceChart({ players }: { players: RacePlayer[] }) {
                       x={x(end.second) + 8}
                       y={y(end.wpm)}
                       dominantBaseline="middle"
-                      className="fill-ink-dim font-mono text-[10px]"
+                      className="fill-ink-dim text-[10px]"
                     >
                       {player.name}
                     </text>
@@ -115,7 +115,7 @@ export function RaceChart({ players }: { players: RacePlayer[] }) {
         )}
 
         {width > 0 && finished.length === 0 && (
-          <div style={{ height: HEIGHT }} className="flex items-center justify-center font-mono text-ink-faint text-sm">
+          <div style={{ height: HEIGHT }} className="flex items-center justify-center text-ink-faint text-sm">
             no finished runs to plot
           </div>
         )}

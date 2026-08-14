@@ -13,8 +13,8 @@ export function ThemeToggle() {
       title="Toggle theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {/* Both icons render; CSS picks one. Swapping on `resolvedTheme` alone
-          would flash the wrong glyph before next-themes hydrates. */}
+      {/* both render, CSS picks one — swapping on resolvedTheme would flash
+          the wrong glyph before next-themes hydrates */}
       <Sun className="icon-4 dark:hidden" />
       <Moon className="icon-4 hidden dark:block" />
     </IconButton>

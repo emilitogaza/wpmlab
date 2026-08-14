@@ -26,7 +26,7 @@ export function Results({ result, config, exactMode, onRestart, onRepeat }: Resu
       className="flex w-full flex-col gap-8"
     >
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        {/* Hero figures — the two numbers anyone actually came for. */}
+        {/* the two numbers people came for */}
         <div className="flex shrink-0 flex-row gap-8 lg:w-40 lg:flex-col lg:gap-6">
           <Hero label="wpm" value={Math.round(result.wpm)} />
           <Hero label="acc" value={`${Math.round(result.accuracy)}%`} />
@@ -47,8 +47,7 @@ export function Results({ result, config, exactMode, onRestart, onRepeat }: Resu
           label="characters"
           hint="correct / incorrect / extra / missed"
         >{`${characters.correct}/${characters.incorrect}/${characters.extra}/${characters.missed}`}</Stat>
-        {/* Consistency is variance across per-second samples, so it needs at
-            least two of them to mean anything. */}
+        {/* consistency needs at least two samples to mean anything */}
         <Stat label="consistency">{result.samples.length < 2 ? "—" : `${Math.round(result.consistency)}%`}</Stat>
         <Stat label="time">{`${(result.durationMs / 1000).toFixed(1)}s`}</Stat>
       </dl>
@@ -68,8 +67,9 @@ export function Results({ result, config, exactMode, onRestart, onRepeat }: Resu
 function Hero({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <div className="font-mono text-2xl text-ink-dim leading-none">{label}</div>
-      <div className="font-mono text-6xl text-brand-ink tabular-nums leading-none">{value}</div>
+      <div className="text-2xl text-ink-dim leading-none">{label}</div>
+      {/* display-scale figure — gets the title width, not the body width */}
+      <div className="font-stretch-120% text-6xl text-brand-ink leading-none">{value}</div>
     </div>
   );
 }
@@ -77,10 +77,10 @@ function Hero({ label, value }: { label: string; value: string | number }) {
 function Stat({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="font-mono text-ink-dim text-sm" title={hint}>
+      <dt className="text-ink-dim text-sm" title={hint}>
         {label}
       </dt>
-      <dd className="font-mono text-2xl text-ink tabular-nums">{children}</dd>
+      <dd className="text-2xl text-ink">{children}</dd>
     </div>
   );
 }

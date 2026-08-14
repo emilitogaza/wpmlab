@@ -3,18 +3,12 @@
 import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from "react";
 import { DEFAULT_SETTINGS, parseSettings, SETTINGS_STORAGE_KEY, type Settings } from "@/lib/settings";
 
-/**
- * Settings live in localStorage and are read through `useSyncExternalStore`
- * rather than a state-plus-effect pair. The server snapshot is the defaults and
- * the client snapshot is whatever is stored, so the first paint matches the
- * server exactly and React swaps in the real values right after hydration —
- * without the cascading render that reading storage inside an effect causes.
- *
- * Reading through the store also means a second tab picks up a change for free.
- */
+// Settings live in localStorage, read via useSyncExternalStore. The server
+// snapshot is the defaults, so first paint matches SSR and the real values
+// swap in after hydration. Bonus: a second tab picks up changes for free.
 
-/** getSnapshot must return a referentially stable value or React re-renders
- *  forever, so the parsed object is cached against the raw string it came from. */
+// getSnapshot must return a stable reference or React re-renders forever —
+// cache the parsed object against the raw string it came from
 let cache: { raw: string | null; value: Settings } = { raw: null, value: DEFAULT_SETTINGS };
 
 function getSnapshot(): Settings {

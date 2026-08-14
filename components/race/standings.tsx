@@ -35,7 +35,7 @@ export function Standings({
           <li key={player.id} className="flex items-center gap-3">
             <span
               className={cn(
-                "w-28 shrink-0 truncate font-mono text-sm",
+                "w-28 shrink-0 truncate text-sm",
                 raceColorText(player.colorIndex),
                 !player.connected && "opacity-40",
               )}
@@ -56,7 +56,7 @@ export function Standings({
               />
             </div>
 
-            <span className="w-24 shrink-0 text-right font-mono text-ink-dim text-sm tabular-nums">
+            <span className="w-24 shrink-0 text-right text-ink-dim text-sm">
               {player.finishedAt !== null ? (
                 <span className="text-ink">{`${Math.round(player.wpm)} wpm`}</span>
               ) : (

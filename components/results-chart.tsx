@@ -5,17 +5,9 @@ import { niceCeiling, smoothPath, xTicks, yTicks } from "@/lib/chart";
 import type { Sample } from "@/lib/stats";
 import { cn } from "@/lib/utils";
 
-/**
- * Speed over the course of the test.
- *
- * Deliberately single-axis. Net wpm and raw wpm share a unit, so they share a
- * scale; errors are a count on a completely different scale, so they are drawn
- * as × glyphs sitting on the raw line rather than on a second y-axis. A second
- * y-axis would let any two shapes be juxtaposed into whatever story the reader
- * brings, which is exactly what a results screen should not do.
- *
- * Net wpm is the emphasis series (brand hue); raw is context (grey).
- */
+// Speed over the course of the test. Single-axis on purpose: net and raw wpm
+// share a unit, and errors are a count — drawn as × glyphs on the raw line
+// rather than on a misleading second y-axis.
 
 const HEIGHT = 240;
 const PAD = { top: 16, right: 16, bottom: 28, left: 40 };
@@ -42,8 +34,7 @@ export function ResultsChart({ samples }: ResultsChartProps) {
   const plotWidth = Math.max(0, width - PAD.left - PAD.right);
   const plotHeight = HEIGHT - PAD.top - PAD.bottom;
 
-  // A test shorter than two seconds has nothing to plot; the headline numbers
-  // above the chart still tell the whole story.
+  // under two seconds there's nothing to plot
   const enoughToPlot = samples.length >= 2 && width > 0;
 
   const peak = Math.max(...samples.map((s) => Math.max(s.wpm, s.raw)), 10);
@@ -65,7 +56,7 @@ export function ResultsChart({ samples }: ResultsChartProps) {
           aria-expanded={showTable}
           aria-controls={tableId}
           onClick={() => setShowTable((v) => !v)}
-          className="cursor-pointer rounded-1_5 px-2 py-1 font-mono text-ink-faint text-xs transition-colors hover:bg-fill-muted hover:text-ink"
+          className="cursor-pointer rounded-1_5 px-2 py-1 text-ink-faint text-xs transition-colors hover:bg-fill-muted hover:text-ink"
         >
           {showTable ? "hide data" : "show data"}
         </button>
@@ -88,8 +79,7 @@ export function ResultsChart({ samples }: ResultsChartProps) {
               setHover(Math.max(0, Math.min(samples.length - 1, index)));
             }}
           >
-            {/* Grid: recessive, horizontal only — vertical lines would compete
-                with the crosshair. */}
+            {/* horizontal grid only — vertical lines would fight the crosshair */}
             {ticks.map((tick) => (
               <g key={tick}>
                 <line
@@ -105,7 +95,7 @@ export function ResultsChart({ samples }: ResultsChartProps) {
                   y={y(tick)}
                   textAnchor="end"
                   dominantBaseline="middle"
-                  className="fill-ink-faint font-mono text-[10px]"
+                  className="fill-ink-faint text-[10px]"
                 >
                   {tick}
                 </text>
@@ -118,13 +108,13 @@ export function ResultsChart({ samples }: ResultsChartProps) {
                 x={x(second)}
                 y={HEIGHT - 8}
                 textAnchor="middle"
-                className="fill-ink-faint font-mono text-[10px]"
+                className="fill-ink-faint text-[10px]"
               >
                 {second}
               </text>
             ))}
 
-            {/* Context first, emphasis on top. */}
+            {/* context first, emphasis on top */}
             <path
               d={smoothPath(samples.map((s) => [x(s.second), y(s.raw)]))}
               fill="none"
@@ -140,8 +130,7 @@ export function ResultsChart({ samples }: ResultsChartProps) {
               className="stroke-series-wpm"
             />
 
-            {/* Errors as glyphs on the raw line: shape carries the identity, so
-                the red is reinforcement rather than the only signal. */}
+            {/* error glyphs on the raw line — shape carries the identity */}
             {samples
               .filter((s) => s.errors > 0)
               .map((s) => (
@@ -167,20 +156,19 @@ export function ResultsChart({ samples }: ResultsChartProps) {
         )}
 
         {!enoughToPlot && width > 0 && (
-          <div style={{ height: HEIGHT }} className="flex items-center justify-center font-mono text-ink-faint text-sm">
+          <div style={{ height: HEIGHT }} className="flex items-center justify-center text-ink-faint text-sm">
             too short to plot
           </div>
         )}
 
         {active && (
           <div
-            // Flips to the left of the crosshair past the midpoint so it never
-            // runs off the edge of the card.
+            // flips left past the midpoint so it stays on the card
             style={{
               left: x(active.second),
               transform: `translateX(${x(active.second) > PAD.left + plotWidth / 2 ? "calc(-100% - 12px)" : "12px"})`,
             }}
-            className="pointer-events-none absolute top-4 rounded-2 border border-border bg-fill-raised px-3 py-2 font-mono text-xs shadow-lg"
+            className="pointer-events-none absolute top-4 rounded-2 border border-border bg-fill-raised px-3 py-2 text-xs shadow-lg"
           >
             <div className="mb-1 text-ink-dim">{active.second}s</div>
             <TooltipRow swatch="bg-series-wpm" label="wpm" value={Math.round(active.wpm)} />
@@ -192,7 +180,7 @@ export function ResultsChart({ samples }: ResultsChartProps) {
 
       {showTable && (
         <div id={tableId} className="mt-3 max-h-56 overflow-auto rounded-2 border border-border">
-          <table className="w-full font-mono text-xs">
+          <table className="w-full text-xs">
             <thead className="sticky top-0 bg-fill-raised text-ink-dim">
               <tr>
                 <Th>second</Th>
@@ -234,8 +222,6 @@ function TooltipRow({ swatch, label, value }: { swatch: string; label: string; v
   return (
     <div className="flex items-center gap-2">
       <span className={cn("size-2 rounded-full", swatch)} />
-      {/* The number wears text ink, never the series colour — the swatch beside
-          it carries the identity. */}
       <span className="text-ink-dim">{label}</span>
       <span className="ml-auto pl-3 text-ink">{value}</span>
     </div>
@@ -244,7 +230,7 @@ function TooltipRow({ swatch, label, value }: { swatch: string; label: string; v
 
 function Legend() {
   return (
-    <div className="flex flex-wrap items-center gap-4 font-mono text-ink-dim text-xs">
+    <div className="flex flex-wrap items-center gap-4 text-ink-dim text-xs">
       <span className="flex items-center gap-1.5">
         <span className="h-0.5 w-4 rounded-full bg-series-wpm" />
         wpm
@@ -255,8 +241,7 @@ function Legend() {
       </span>
       <span className="flex items-center gap-1.5">
         <svg width="10" height="10" viewBox="-5 -5 10 10" aria-hidden className="stroke-series-error">
-          {/* Decorative — the word "errors" beside it is the accessible label —
-              but a <title> keeps the linter's blanket SVG rule satisfied. */}
+          {/* decorative, but a <title> keeps the linter's SVG rule happy */}
           <title>Error marker</title>
           <path d="M-3-3 3 3M3-3-3 3" strokeWidth={2} strokeLinecap="round" />
         </svg>
@@ -267,8 +252,7 @@ function Legend() {
 }
 
 function ErrorMark({ x, y, count }: { x: number; y: number; count: number }) {
-  // Grows a little with the number of mistakes, but stays above the 8px minimum
-  // hit/see size at one error.
+  // grows a little with the count, capped
   const size = Math.min(4 + count, 8);
   return (
     <g className="stroke-series-error" strokeWidth={2} strokeLinecap="round">

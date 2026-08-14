@@ -3,8 +3,7 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-/** Flat square button for header/toolbar icons — no fill until hover, so a row
- *  of them stays quiet next to the typing surface. */
+/** flat square button for header/toolbar icons — no fill until hover */
 export function IconButton({ className, ...props }: React.ComponentProps<"button">) {
   return (
     <button
