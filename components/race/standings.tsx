@@ -16,7 +16,7 @@ export function Standings({
   players: RacePlayer[];
   totalChars: number;
   meId: string | null;
-  /** Your own position and speed, straight from the local engine. */
+  /** your own position and speed, straight from the local engine */
   local?: { cursor: number; wpm: number };
 }) {
   const merged = players.map((player) =>
@@ -48,10 +48,8 @@ export function Standings({
               <m.div
                 initial={false}
                 animate={{ scaleX: ratio }}
-                // Your own bar snaps: the value is already exact and arrives on
-                // every keystroke, so smoothing it would only add lag. Rivals
-                // get a spring, which is what turns their 10Hz updates into
-                // movement rather than a series of jumps.
+                // own bar snaps (exact, per-keystroke); rivals get a spring to
+                // smooth their 10Hz updates
                 transition={isMe ? { duration: 0 } : { type: "spring", stiffness: 320, damping: 34 }}
                 style={{ transformOrigin: "left" }}
                 className={cn("absolute inset-0 rounded-full", raceColorBg(player.colorIndex))}
